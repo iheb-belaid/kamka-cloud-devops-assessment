@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamka Todo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="page-shell">
+    <section class="hero">
+        <p class="eyebrow">Cloud & DevOps Assessment</p>
+        <h1>Kamka Todo Board</h1>
+        <p class="intro">
+            A minimal three-tier app used to demonstrate containerization, CI/CD, monitoring,
+            and reproducible deployment.
+        </p>
+    </section>
+
+    <section class="panel">
+        <form id="todo-form" class="todo-form">
+            <label class="sr-only" for="title">Todo title</label>
+            <input id="title" name="title" type="text" maxlength="120" placeholder="Add a task" required>
+            <button type="submit">Add task</button>
+        </form>
+
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+
+        <div class="list-header">
+            <h2>Tasks</h2>
+            <button id="refresh-button" type="button" class="secondary-button">Refresh</button>
+        </div>
+
+        <ul id="todo-list" class="todo-list"></ul>
+        <template id="todo-item-template">
+            <li class="todo-item">
+                <div>
+                    <p class="todo-title"></p>
+                    <small class="todo-meta"></small>
+                </div>
+                <div class="todo-actions">
+                    <button class="toggle-button" type="button">Complete</button>
+                    <button class="delete-button" type="button">Delete</button>
+                </div>
+            </li>
+        </template>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
+
