@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+node_modules/
+api/target/
+api/.mvn/wrapper/maven-wrapper.jar
+uptime-kuma-data/
+postgres-data/
+
