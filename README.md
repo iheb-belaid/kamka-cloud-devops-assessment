@@ -8,7 +8,7 @@ This repository contains a minimal three-tier Todo application built for the KAM
 - `api`: Spring Boot REST API
 - `db`: PostgreSQL
 - `monitoring`: Uptime Kuma
-- `ci/cd`: GitHub Actions building and publishing Docker images to GHCR
+- `ci/cd`: GitHub Actions building and publishing Docker images to Docker Hub
 
 The frontend talks to the API through Nginx, and the API talks to PostgreSQL.
 
@@ -30,7 +30,7 @@ The frontend talks to the API through Nginx, and the API talks to PostgreSQL.
 
 - Docker Desktop or Docker Engine with Compose v2
 - Java 17 and Maven only if you want to run the API outside Docker
-- A GitHub account if you want to push images to GHCR
+- A Docker Hub account if you want the workflow to publish images
 
 ## Environment variables
 
@@ -38,8 +38,8 @@ The frontend talks to the API through Nginx, and the API talks to PostgreSQL.
 2. Replace the placeholder values, especially:
    - `POSTGRES_PASSWORD`
    - `IMAGE_REGISTRY`
-   - `GHCR_USERNAME`
-   - `GHCR_TOKEN`
+   - `DOCKERHUB_USERNAME`
+   - `DOCKERHUB_TOKEN`
 
 Secrets are never committed. The real `.env` file is ignored by Git.
 
@@ -59,12 +59,13 @@ Services:
 
 ## First Uptime Kuma setup
 
-Uptime Kuma starts empty on first launch. Create the admin account, then add these HTTP monitors:
+Uptime Kuma starts empty on first launch. Create the admin account, then add these monitors:
 
 - `Frontend health` -> `http://frontend/health`
 - `API health` -> `http://api:8080/actuator/health`
+- `PostgreSQL` -> TCP host `db`, port `5432`
 
-Those URLs work from inside the Docker network, so Kuma can monitor the stack directly.
+Those targets work from inside the Docker network, so Kuma can monitor the stack directly.
 
 ## Running the API without Docker
 
@@ -88,20 +89,27 @@ Both environments use the same services and the same container topology:
 Main difference:
 
 - `docker-compose.yml` builds images locally for development
-- `docker-compose.prod.yml` switches the API and frontend to prebuilt images from a registry
+- `docker-compose.prod.yml` switches the API and frontend to prebuilt images from Docker Hub
 
-This keeps the runtime shape almost identical while still supporting CI/CD and remote deployment.
+This keeps the runtime shape almost identical while still supporting CI/CD and reproducible deployment.
 
 ## CI/CD pipeline
 
 The GitHub Actions workflow does four things:
 
 1. Runs Spring Boot tests.
-2. Builds the API and frontend Docker images.
-3. Pushes the images to GHCR on non-PR events.
+2. Builds the API and frontend Docker images on every push and pull request.
+3. Pushes the images to Docker Hub on push events.
 4. Triggers a deployment job on pushes to `main`.
 
-If no remote deployment secrets are configured, the deployment job exits with a clear explanation and the repository remains deployable through `scripts/deploy.sh`.
+On pull requests, the workflow validates tests and image builds, but skips registry pushes and deployment.
+
+Docker Hub is used for the submission because public images are easier for a reviewer to inspect and pull without extra registry access.
+
+### Required pipeline secrets
+
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
 
 ### Optional live deployment secrets
 
@@ -110,6 +118,8 @@ To enable SSH deployment from GitHub Actions, configure:
 - `DEPLOY_HOST`
 - `DEPLOY_USERNAME`
 - `DEPLOY_SSH_KEY`
+
+If no remote deployment secrets are configured, the deployment job exits with a clear explanation and the repository remains deployable through `docker-compose.prod.yml` and `scripts/deploy.sh`.
 
 The target host also needs Docker Compose and a populated `.env` file.
 
@@ -127,7 +137,7 @@ chmod +x scripts/deploy.sh
 The script:
 
 - validates required variables
-- logs into GHCR when credentials are provided
+- optionally logs into Docker Hub when credentials are provided
 - pulls the production images
 - starts the stack
 - checks that core services become healthy
@@ -139,16 +149,17 @@ The script:
 - `PATCH /api/todos/{id}/complete` -> toggle completion state
 - `DELETE /api/todos/{id}` -> delete a todo
 
-## What is still manual
+## Current validation status
 
-- Docker-based runtime validation on this workstation, because Docker was not installed yet
-- First-time monitor creation inside Uptime Kuma
-- Optional live deployment host provisioning
+- Local Docker runtime validation is complete on this workstation
+- The stack starts successfully with `docker compose up --build -d`
+- Uptime Kuma is configured with frontend, API, and PostgreSQL monitors
+- Optional live deployment host provisioning is still pending
 
 ## Suggested next steps before submission
 
-1. Install Docker Desktop.
-2. Run `docker compose up --build`.
-3. Create the two Kuma monitors and capture screenshots.
-4. Push the repo to GitHub and verify the workflow.
+1. Push the repo to GitHub and verify the Docker Hub workflow.
+2. Confirm that both images appear on Docker Hub with SHA and `latest` tags.
+3. Capture screenshots of the running stack and the three Kuma monitors.
+4. Finalize the deployment notes and environment variable instructions.
 5. Export the notes in `docs/assessment-notes.md` as PDF.

@@ -33,8 +33,13 @@ for var_name in "${REQUIRED_VARS[@]}"; do
   fi
 done
 
-if [ -n "${GHCR_USERNAME:-}" ] && [ -n "${GHCR_TOKEN:-}" ]; then
-  echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+registry_host="${IMAGE_REGISTRY%%/*}"
+if [ "${registry_host}" = "${IMAGE_REGISTRY}" ]; then
+  registry_host="docker.io"
+fi
+
+if [ -n "${DOCKERHUB_USERNAME:-}" ] && [ -n "${DOCKERHUB_TOKEN:-}" ]; then
+  echo "${DOCKERHUB_TOKEN}" | docker login "${registry_host}" -u "${DOCKERHUB_USERNAME}" --password-stdin
 fi
 
 echo "Pulling production images..."
