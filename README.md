@@ -153,13 +153,13 @@ The script:
 
 - Local Docker runtime validation is complete on this workstation
 - The stack starts successfully with `docker compose up --build -d`
+- The production profile starts successfully with `docker compose -f docker-compose.prod.yml --env-file .env up -d`
 - Uptime Kuma is configured with frontend, API, and PostgreSQL monitors
-- Optional live deployment host provisioning is still pending
+- The GitHub Actions workflow completes successfully for test, build, image push, and deploy-stage signaling
+- The Docker Hub repositories for `kamka-todo-api` and `kamka-todo-frontend` are published and pullable
 
-## Suggested next steps before submission
+## Submission notes
 
-1. Push the repo to GitHub and verify the Docker Hub workflow.
-2. Confirm that both images appear on Docker Hub with SHA and `latest` tags.
-3. Capture screenshots of the running stack and the three Kuma monitors.
-4. Finalize the deployment notes and environment variable instructions.
-5. Export the notes in `docs/assessment-notes.md` as PDF.
+- The repository includes the application code, Dockerfiles, Compose files, CI/CD workflow, and deployment script required for the assessment
+- The final assessment document is available in `docs/assessment-notes.pdf`
+- Live deployment is not required for the core submission and remains an optional follow-up improvement
