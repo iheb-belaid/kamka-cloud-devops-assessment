@@ -157,9 +157,16 @@ The script:
 - Uptime Kuma is configured with frontend, API, and PostgreSQL monitors
 - The GitHub Actions workflow completes successfully for test, build, image push, and deploy-stage signaling
 - The Docker Hub repositories for `kamka-todo-api` and `kamka-todo-frontend` are published and pullable
+- Optional live deployment is validated on Render with:
+  - `kamka-postgres` for PostgreSQL
+  - `kamka-api` for the Spring Boot API
+  - `kamka-frontend` for the public Nginx frontend
+- The public Render frontend can create, refresh, complete, reopen, and delete todos successfully
+- Render-managed HTTPS is active on the public API and frontend endpoints
 
 ## Submission notes
 
 - The repository includes the application code, Dockerfiles, Compose files, CI/CD workflow, and deployment script required for the assessment
 - The final assessment document is available in `docs/assessment-notes.pdf`
-- Live deployment is not required for the core submission and remains an optional follow-up improvement
+- The core assessment requirements are complete without the bonus
+- The optional bonus live deployment has also been completed on Render
