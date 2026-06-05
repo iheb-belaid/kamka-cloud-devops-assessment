@@ -170,3 +170,5 @@ The script:
 - The final assessment document is available in `docs/assessment-notes.pdf`
 - The core assessment requirements are complete without the bonus
 - The optional bonus live deployment has also been completed on Render
+- The Render bonus uses the free tier, so the API may spin down after inactivity; the first frontend request can briefly return `502` until the API wakes up
+- If needed during review, opening `https://kamka-api.onrender.com/actuator/health` first wakes the API before loading `https://kamka-frontend.onrender.com`
