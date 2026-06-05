@@ -134,6 +134,12 @@ chmod +x scripts/deploy.sh
 ./scripts/deploy.sh .env
 ```
 
+You can also run the production profile directly with Docker Compose:
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file .env up -d
+```
+
 The script:
 
 - validates required variables
